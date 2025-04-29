@@ -1,6 +1,8 @@
 package com.alexisdev.pokeapp
 
 import android.app.Application
+import com.alexisdev.data.di.dataModule
+import com.alexisdev.domain.di.domainModule
 import com.alexisdev.poke_api.pokeApiModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -14,7 +16,7 @@ class App : Application() {
         startKoin {
             androidLogger(Level.ERROR)
             androidContext(this@App)
-            modules(pokeApiModule)
+            modules(pokeApiModule, dataModule, domainModule)
         }
     }
 }

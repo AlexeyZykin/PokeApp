@@ -25,3 +25,4 @@ include(":core:poke-api")
 
 include(":core:domain")
 include(":core:common")
+include(":core:data")

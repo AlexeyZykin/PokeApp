@@ -22,6 +22,6 @@ interface PokeApi {
     companion object {
         const val BASE_URL = "https://pokeapi.co/api/v2/"
         const val MAX_PAGE_SIZE = 30
-        const val START_OFFSET_VALUE = 1
+        const val START_OFFSET_VALUE = 0
     }
 }
