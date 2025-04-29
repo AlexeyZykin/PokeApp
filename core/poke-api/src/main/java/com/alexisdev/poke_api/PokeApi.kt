@@ -1,5 +1,6 @@
 package com.alexisdev.poke_api
 
+import com.alexisdev.poke_api.dto.PokemonDetailsDto
 import com.alexisdev.poke_api.dto.PokemonListDto
 import retrofit2.http.GET
 import retrofit2.http.Path
