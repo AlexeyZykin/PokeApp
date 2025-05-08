@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.alexisdev.common"
+    namespace = "com.alexisdev.pokemon_main"
     compileSdk = 35
 
     defaultConfig {
@@ -30,9 +30,14 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    buildFeatures {
+        viewBinding = true
+    }
 }
 
 dependencies {
+    implementation(project(":core:domain"))
+    implementation(project(":core:common"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -45,4 +50,9 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.core)
 
+    implementation(libs.paging)
+    implementation(libs.androidx.lifecycle.viewmodel)
+    implementation(libs.androidx.lifecycle.runtime)
+
+    implementation(libs.glide)
 }

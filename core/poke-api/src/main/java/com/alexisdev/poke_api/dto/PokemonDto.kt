@@ -1,7 +1,12 @@
 package com.alexisdev.poke_api.dto
 
 data class PokemonDto(
-    val id: Int,
     val name: String,
-    val stats: List<PokemonStatDto>
-)
+    val url: String
+) {
+    fun getPokemonId(): Int? {
+        return url.split("/")
+            .last { it.isNotEmpty() }
+            .toIntOrNull()
+    }
+}

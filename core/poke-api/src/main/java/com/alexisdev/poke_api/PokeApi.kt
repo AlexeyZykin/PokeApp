@@ -1,7 +1,7 @@
 package com.alexisdev.poke_api
 
 import com.alexisdev.poke_api.dto.PokemonDetailsDto
-import com.alexisdev.poke_api.dto.PokemonListDto
+import com.alexisdev.poke_api.dto.PokeApiResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -10,9 +10,9 @@ interface PokeApi {
 
     @GET("pokemon")
     suspend fun fetchPokemonList(
-        @Query("limit") limit: Int = 30,
-        @Query("offset") offset: Int = 30
-    ) : PokemonListDto
+        @Query("limit") limit: Int,
+        @Query("offset") offset: Int
+    ) : PokeApiResponse
 
     @GET("pokemon/{name}/")
     suspend fun fetchPokemonDetails(

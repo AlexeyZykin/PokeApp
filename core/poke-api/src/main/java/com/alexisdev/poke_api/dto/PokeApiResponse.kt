@@ -1,6 +1,6 @@
 package com.alexisdev.poke_api.dto
 
-data class PokemonListDto(
+data class PokeApiResponse(
     val count: Int,
     val next: String,
     val previous: String,

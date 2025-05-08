@@ -40,6 +40,8 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:domain"))
     implementation(project(":core:common"))
+    implementation(project(":feature:pokemon-main"))
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
