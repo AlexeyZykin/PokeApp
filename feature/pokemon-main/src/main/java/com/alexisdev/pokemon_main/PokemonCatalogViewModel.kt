@@ -4,14 +4,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.alexisdev.common.navigation.NavDirection
+import com.alexisdev.common.navigation.NavEffect
+import com.alexisdev.common.navigation.NavigationManager
 import com.alexisdev.domain.model.Pokemon
 import com.alexisdev.domain.usecase.api.GetPokemonsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 
-internal class PokemonCatalogViewModel(private val getPokemonsUseCase: GetPokemonsUseCase) :
+internal class PokemonCatalogViewModel(
+    private val getPokemonsUseCase: GetPokemonsUseCase,
+    private val navManager: NavigationManager
+) :
     ViewModel() {
 
     private val _state = MutableStateFlow<PokemonCatalogState>(PokemonCatalogState.Loading)
@@ -23,10 +30,12 @@ internal class PokemonCatalogViewModel(private val getPokemonsUseCase: GetPokemo
 
     private fun loadPokemons() {
         getPokemonsUseCase.execute()
-            .onEach { pagingData ->
-                _state.value = PokemonCatalogState.Content(pagingData)
-            }
             .cachedIn(viewModelScope)
+            .onEach { pagingData ->
+                _state.update {
+                    PokemonCatalogState.Content(pagingData)
+                }
+            }
             .launchIn(viewModelScope)
     }
 
@@ -34,6 +43,16 @@ internal class PokemonCatalogViewModel(private val getPokemonsUseCase: GetPokemo
         when (event) {
             is PokemonCatalogEvent.OnRetry -> {
                 loadPokemons()
+            }
+
+            is PokemonCatalogEvent.OnNavigateToDetails -> {
+                navManager.navigate(
+                    NavEffect.NavigateTo(
+                        NavDirection.PokemonCatalogToPokemonDetails(
+                            event.pokeName
+                        )
+                    )
+                )
             }
         }
     }
@@ -50,5 +69,6 @@ sealed interface PokemonCatalogEvent {
 
     data object OnRetry : PokemonCatalogEvent
 
+    data class OnNavigateToDetails(val pokeName: String) : PokemonCatalogEvent
 }
 

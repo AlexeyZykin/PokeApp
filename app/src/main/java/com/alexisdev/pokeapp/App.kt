@@ -5,7 +5,8 @@ import com.alexisdev.common.di.commonModule
 import com.alexisdev.data.di.dataModule
 import com.alexisdev.domain.di.domainModule
 import com.alexisdev.poke_api.pokeApiModule
-import com.alexisdev.pokemon_main.pokemonMainFeatureModule
+import com.alexisdev.pokemon_details.di.pokemonDetailsFeatureModule
+import com.alexisdev.pokemon_main.di.pokemonMainFeatureModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -23,7 +24,8 @@ class App : Application() {
                 dataModule,
                 domainModule,
                 commonModule,
-                pokemonMainFeatureModule
+                pokemonMainFeatureModule,
+                pokemonDetailsFeatureModule
             )
         }
     }

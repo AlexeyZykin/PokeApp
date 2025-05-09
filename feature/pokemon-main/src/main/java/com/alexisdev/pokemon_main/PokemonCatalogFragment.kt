@@ -1,7 +1,6 @@
 package com.alexisdev.pokemon_main
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,19 +14,26 @@ import com.alexisdev.pokemon_main.databinding.FragmentPokemonCatalogBinding
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import com.alexisdev.common.R as designsystem
 
 
 class PokemonCatalogFragment : Fragment() {
-    private lateinit var binding: FragmentPokemonCatalogBinding;
+    private var _binding: FragmentPokemonCatalogBinding? = null
+    private val binding get() = _binding!!
     private val viewModel by viewModel<PokemonCatalogViewModel>()
     private var currentSnackbar: Snackbar? = null
-    private val adapter by lazy { PokemonAdapter() }
+
+    private val adapter by lazy { PokemonAdapter(object : PokemonAdapter.ClickListener {
+        override fun onClick(pokeName: String) {
+            viewModel.onEvent(PokemonCatalogEvent.OnNavigateToDetails(pokeName))
+        }
+    }) }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentPokemonCatalogBinding.inflate(inflater, container, false)
+        _binding = FragmentPokemonCatalogBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -45,7 +51,6 @@ class PokemonCatalogFragment : Fragment() {
                         is PokemonCatalogState.Loading -> {
                         }
                         is PokemonCatalogState.Content -> {
-                            currentSnackbar?.dismiss()
                             adapter.submitData(lifecycle, state.pagingData)
                         }
                     }
@@ -69,9 +74,10 @@ class PokemonCatalogFragment : Fragment() {
         val snackbar = Snackbar.make(
             view, msg, Snackbar.LENGTH_INDEFINITE
         )
-        snackbar.setAction("Повторить") {
+        snackbar.setAction(getString(R.string.error_action_retry)) {
             viewModel.onEvent(PokemonCatalogEvent.OnRetry)
         }
+        snackbar.setActionTextColor(requireContext().getColor(designsystem.color.pink))
         snackbar.addCallback(object : Snackbar.Callback() {
             override fun onDismissed(snackbar: Snackbar, event: Int) {
                 super.onDismissed(snackbar, event)
@@ -100,9 +106,9 @@ class PokemonCatalogFragment : Fragment() {
                             showProgressBar(true)
                         }
                         is LoadState.Error -> {
-                            showErrorSnackbar(binding.root, "Произошла ошибка при загрузке")
+                            showErrorSnackbar(binding.root, getString(R.string.error_message_title))
                         }
-                        else -> {
+                        is LoadState.NotLoading  -> {
                             showProgressBar(false)
                         }
                     }
@@ -121,6 +127,12 @@ class PokemonCatalogFragment : Fragment() {
                 }
             }
         }
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

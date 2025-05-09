@@ -1,0 +1,13 @@
+<resources>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="pokemon_details_height">Height:</string>
+    <string name="pokemon_details_weight">Weight:</string>
+    <string name="pokemon_details_type">Type:</string>
+    <string name="poke_details_stats_attack">Attack:</string>
+    <string name="poke_details_stats_defense">Defense:</string>
+    <string name="poke_details_stats_hp">Hp:</string>
+    <string name="poke_details_image_content_desc">Pokemon image</string>
+    <string name="poke_details_general_label">General Info</string>
+    <string name="poke_details_stats_label">Stats</string>
+</resources>

@@ -15,6 +15,8 @@ import com.alexisdev.common.getKoinInstance
 import com.alexisdev.common.navigation.NavDirection
 import com.alexisdev.common.navigation.NavEffect
 import com.alexisdev.common.navigation.NavigationManager
+import com.alexisdev.pokemon_main.PokemonCatalogFragment
+import com.alexisdev.pokemon_main.PokemonCatalogFragmentDirections
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -61,7 +63,8 @@ class MainActivity : AppCompatActivity() {
     private fun handleNavDirection(navDirection: NavDirection, navController: NavController) {
         when (navDirection) {
             is NavDirection.PokemonCatalogToPokemonDetails -> {
-
+                val action = PokemonCatalogFragmentDirections.actionPokemonCatalogFragmentToPokemonDetailsFragment(navDirection.pokeName)
+                navController.navigate(action)
             }
         }
     }

@@ -11,11 +11,12 @@ import com.alexisdev.pokemon_main.databinding.PokemonItemBinding
 import com.bumptech.glide.Glide
 import java.util.Locale
 
-class PokemonAdapter : PagingDataAdapter<Pokemon, PokemonAdapter.ViewHolder>(PokemonComparator) {
+class PokemonAdapter(private val clickListener: ClickListener) : PagingDataAdapter<Pokemon, PokemonAdapter.ViewHolder>(PokemonComparator) {
 
     class ViewHolder(private val binding: PokemonItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(pokemon: Pokemon) {
+        fun bind(pokemon: Pokemon, clickListener: ClickListener) {
+            binding.tvPokeId.text = pokemon.id.toString()
             Glide
                 .with(binding.root)
                 .load(pokemon.image.imageUrl)
@@ -27,14 +28,16 @@ class PokemonAdapter : PagingDataAdapter<Pokemon, PokemonAdapter.ViewHolder>(Pok
                     Locale.ROOT
                 ) else it.toString()
             }
+            binding.root.setOnClickListener {
+                clickListener.onClick(pokemon.name)
+            }
         }
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Log.d("my", getItem(position).toString())
         val pokemon = getItem(position)
         pokemon?.let {
-            holder.bind(it)
+            holder.bind(it, clickListener)
         }
     }
 
@@ -43,6 +46,10 @@ class PokemonAdapter : PagingDataAdapter<Pokemon, PokemonAdapter.ViewHolder>(Pok
         return ViewHolder(binding)
     }
 
+
+    interface ClickListener {
+        fun onClick(pokeName: String)
+    }
 
     object PokemonComparator : DiffUtil.ItemCallback<Pokemon>() {
         override fun areItemsTheSame(oldItem: Pokemon, newItem: Pokemon): Boolean {

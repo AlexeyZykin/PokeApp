@@ -7,5 +7,19 @@
     <fragment
         android:id="@+id/pokemonCatalogFragment"
         android:name="com.alexisdev.pokemon_main.PokemonCatalogFragment"
-        android:label="PokemonCatalogFragment" />
+        android:label="@string/pokemon_catalog_title" >
+        <action
+            android:id="@+id/action_pokemonCatalogFragment_to_pokemonDetailsFragment"
+            app:destination="@id/pokemonDetailsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/pokemonDetailsFragment"
+        android:name="com.alexisdev.pokemon_details.PokemonDetailsFragment"
+        android:label="@string/poke_details_tittle" >
+        <argument
+            android:name="pokemonName"
+            app:argType="string" />
+    </fragment>
+
 </navigation>
