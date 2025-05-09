@@ -106,6 +106,7 @@ class PokemonCatalogFragment : Fragment() {
                             showProgressBar(true)
                         }
                         is LoadState.Error -> {
+                            showProgressBar(false)
                             showErrorSnackbar(binding.root, getString(R.string.error_message_title))
                         }
                         is LoadState.NotLoading  -> {
@@ -118,7 +119,9 @@ class PokemonCatalogFragment : Fragment() {
                             showBottomProgressBar(true)
                         }
 
-                        is LoadState.Error -> {}
+                        is LoadState.Error -> {
+                            showBottomProgressBar(false)
+                        }
 
                         is LoadState.NotLoading -> {
                             showBottomProgressBar(false)

@@ -10,4 +10,6 @@
     <string name="poke_details_image_content_desc">Pokemon image</string>
     <string name="poke_details_general_label">General Info</string>
     <string name="poke_details_stats_label">Stats</string>
+    <string name="error_action_retry">Повторить</string>
+    <string name="error_message_title">Произошла ошибка</string>
 </resources>

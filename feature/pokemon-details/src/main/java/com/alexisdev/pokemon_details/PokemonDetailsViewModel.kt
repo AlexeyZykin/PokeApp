@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 
 class PokemonDetailsViewModel(
     private val getPokemonDetailsUseCase: GetPokemonDetailsUseCase,
@@ -48,6 +49,7 @@ class PokemonDetailsViewModel(
     fun onEvent(event: PokemonDetailsEvent) {
         when (event) {
             is PokemonDetailsEvent.OnRetry -> {
+                _state.update { PokemonDetailsState.Loading }
                 loadPokeDetails()
             }
         }

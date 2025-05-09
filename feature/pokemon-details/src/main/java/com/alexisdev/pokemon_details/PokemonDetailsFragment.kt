@@ -12,7 +12,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.alexisdev.domain.model.PokemonDetails
 import com.alexisdev.pokemon_details.databinding.FragmentPokemonDetailsBinding
 import com.bumptech.glide.Glide
-import kotlinx.coroutines.flow.collect
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.Locale
@@ -22,6 +22,7 @@ class PokemonDetailsFragment : Fragment() {
     private var _binding: FragmentPokemonDetailsBinding? = null
     private val binding get() = _binding!!
     private val viewModel by viewModel<PokemonDetailsViewModel>()
+    private var currentSnackbar: Snackbar? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,12 +43,15 @@ class PokemonDetailsFragment : Fragment() {
                 viewModel.state.collect { state ->
                     when (state) {
                         is PokemonDetailsState.Loading -> {
-
+                            showProgressBar(true)
                         }
                         is PokemonDetailsState.Error -> {
-
+                            showProgressBar(false)
+                            showErrorSnackbar(binding.root, getString(R.string.error_message_title))
                         }
                         is PokemonDetailsState.Content -> {
+                            showProgressBar(false)
+                            currentSnackbar?.dismiss()
                             renderUi(state.pokemonDetails)
                         }
                     }
@@ -56,8 +60,32 @@ class PokemonDetailsFragment : Fragment() {
         }
     }
 
+    private fun showProgressBar(isShow: Boolean) {
+        if (isShow) binding.progressBar.visibility = View.VISIBLE
+        else binding.progressBar.visibility = View.GONE
+    }
+
+    private fun showErrorSnackbar(view: View, msg: String) {
+        val snackbar = Snackbar.make(
+            view, msg, Snackbar.LENGTH_INDEFINITE
+        )
+        snackbar.setAction(getString(R.string.error_action_retry)) {
+            viewModel.onEvent(PokemonDetailsEvent.OnRetry)
+        }
+        snackbar.setActionTextColor(requireContext().getColor(com.alexisdev.common.R.color.pink))
+        snackbar.addCallback(object : Snackbar.Callback() {
+            override fun onDismissed(snackbar: Snackbar, event: Int) {
+                super.onDismissed(snackbar, event)
+                if (event == DISMISS_EVENT_SWIPE) {
+                    showErrorSnackbar(view, msg)
+                }
+            }
+        })
+        currentSnackbar = snackbar
+        snackbar.show()
+    }
+
     private fun renderUi(pokemonDetails: PokemonDetails) = with (binding) {
-        Log.d("PokeTest", pokemonDetails.toString())
         tvPokemonName.text = pokemonDetails.name.replaceFirstChar {
             if (it.isLowerCase()) it.titlecase(
                 Locale.ROOT
