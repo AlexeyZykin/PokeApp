@@ -52,6 +52,9 @@ class PokemonCatalogFragment : Fragment() {
                         }
                         is PokemonCatalogState.Content -> {
                             adapter.submitData(lifecycle, state.pagingData)
+                            binding.btnPokemonsReinitialization.setOnClickListener {
+                                viewModel.onEvent(PokemonCatalogEvent.OnReinitialize)
+                            }
                         }
                     }
                 }

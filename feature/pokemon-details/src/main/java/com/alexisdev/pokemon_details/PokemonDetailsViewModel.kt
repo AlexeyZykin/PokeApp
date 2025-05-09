@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 
-class PokemonDetailsViewModel(
+internal class PokemonDetailsViewModel(
     private val getPokemonDetailsUseCase: GetPokemonDetailsUseCase,
     private val saveStateHandle: SavedStateHandle
     ) : ViewModel() {
@@ -37,7 +37,6 @@ class PokemonDetailsViewModel(
                             }
 
                             is Response.Success -> {
-                                Log.d("PokeTest", response.data.toString())
                                 _state.value = PokemonDetailsState.Content(pokemonDetails = response.data)
                             }
                         }

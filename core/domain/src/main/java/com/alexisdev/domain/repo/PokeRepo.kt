@@ -7,6 +7,7 @@ import com.alexisdev.domain.model.PokemonDetails
 import kotlinx.coroutines.flow.Flow
 
 interface PokeRepo {
-    fun getPokemons(): Flow<PagingData<Pokemon>>
+    fun getPokemons(isRandomStartPositionMode: Boolean): Flow<PagingData<Pokemon>>
     fun getPokemonDetails(name: String): Flow<Response<PokemonDetails>>
+
 }

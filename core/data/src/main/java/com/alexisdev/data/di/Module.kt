@@ -6,6 +6,5 @@ import com.alexisdev.domain.repo.PokeRepo
 import org.koin.dsl.module
 
 val dataModule = module {
-    single { PokePagingDataSource(get()) }
     single<PokeRepo> { PokeRepoImpl(get()) }
 }

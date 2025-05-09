@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.alexisdev.common.Response
 import com.alexisdev.data.datasource.PokePagingDataSource
+import com.alexisdev.data.utils.PokeUtils
 import com.alexisdev.data.utils.toPokemonDetails
 import com.alexisdev.domain.model.Pokemon
 import com.alexisdev.domain.model.PokemonDetails
@@ -14,14 +15,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 internal class PokeRepoImpl(private val pokeApi: PokeApi) : PokeRepo {
-    override fun getPokemons(): Flow<PagingData<Pokemon>> {
+    override fun getPokemons(isRandomStartPositionMode: Boolean): Flow<PagingData<Pokemon>> {
         return Pager(
             config = PagingConfig(
                 pageSize = PokeApi.MAX_PAGE_SIZE,
                 prefetchDistance = 10
             ),
             pagingSourceFactory = {
-                PokePagingDataSource(pokeApi)
+                PokePagingDataSource(pokeApi, isRandomStartPositionMode)
             }
         ).flow
     }
