@@ -1,10 +1,7 @@
 package com.alexisdev.pokemon_details
 
 import com.alexisdev.domain.model.PokemonStat
-
-enum class StatType {
-    ATTACK, DEFENSE, HP, UNDEFINED
-}
+import com.alexisdev.domain.model.StatType
 
 fun PokemonStat.toStatType(statStr: String) = when (statStr.lowercase()) {
     "attack" -> StatType.ATTACK

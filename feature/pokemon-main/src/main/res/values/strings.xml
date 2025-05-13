@@ -4,4 +4,7 @@
     <string name="error_message_title">Произошла ошибка</string>
     <string name="error_action_retry">Повторить</string>
     <string name="pokemon_catalog_reinitialization_btn">Reinitialize</string>
+    <string name="pokemon_catalog_checkbox_attack">attack</string>
+    <string name="pokemon_catalog_checkbox_defense">defense</string>
+    <string name="pokemon_catalog_checkbox_hp">hp</string>
 </resources>

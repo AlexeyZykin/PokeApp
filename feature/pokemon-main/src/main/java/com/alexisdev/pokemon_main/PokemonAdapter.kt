@@ -1,6 +1,5 @@
 package com.alexisdev.pokemon_main
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
@@ -10,17 +9,26 @@ import com.alexisdev.domain.model.Pokemon
 import com.alexisdev.pokemon_main.databinding.PokemonItemBinding
 import com.bumptech.glide.Glide
 import java.util.Locale
+import com.alexisdev.common.R as designsystem
 
 class PokemonAdapter(private val clickListener: ClickListener) : PagingDataAdapter<Pokemon, PokemonAdapter.ViewHolder>(PokemonComparator) {
 
-    class ViewHolder(private val binding: PokemonItemBinding) : RecyclerView.ViewHolder(binding.root) {
+
+    inner class ViewHolder(private val binding: PokemonItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(pokemon: Pokemon, clickListener: ClickListener) {
+            val context = binding.root.context
+            binding.cvPokemon.setCardBackgroundColor(
+                if (pokemon.isTop) {
+                    context.getColor(designsystem.color.primary)
+                }
+                else context.getColor(designsystem.color.white)
+            )
+
             binding.tvPokeId.text = pokemon.id.toString()
             Glide
                 .with(binding.root)
                 .load(pokemon.image.imageUrl)
-                //.placeholder(R.drawable.img_placeholder)
                 .centerCrop()
                 .into(binding.imgPokemon)
             binding.tvPokemonName.text = pokemon.name.replaceFirstChar {

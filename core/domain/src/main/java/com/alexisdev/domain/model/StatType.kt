@@ -1,5 +1,5 @@
 package com.alexisdev.domain.model
 
 enum class StatType {
-    HP, ATTACK, DEFENSE, OTHER
+    HP, ATTACK, DEFENSE, UNDEFINED
 }

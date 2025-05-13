@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.alexisdev.domain.model.PokemonDetails
+import com.alexisdev.domain.model.StatType
 import com.alexisdev.pokemon_details.databinding.FragmentPokemonDetailsBinding
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar

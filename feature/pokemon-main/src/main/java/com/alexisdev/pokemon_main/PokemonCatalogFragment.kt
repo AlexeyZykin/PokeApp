@@ -1,6 +1,7 @@
 package com.alexisdev.pokemon_main
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +10,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
+import androidx.paging.PagingData
+import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.alexisdev.domain.model.StatType
 import com.alexisdev.pokemon_main.databinding.FragmentPokemonCatalogBinding
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
@@ -39,9 +44,11 @@ class PokemonCatalogFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initRecyclerView()
+        setupRecyclerView()
         observePokemonCatalogState()
+        observePagingLoadState()
     }
+
 
     private fun observePokemonCatalogState() {
         lifecycleScope.launch {
@@ -51,15 +58,37 @@ class PokemonCatalogFragment : Fragment() {
                         is PokemonCatalogState.Loading -> {
                         }
                         is PokemonCatalogState.Content -> {
+                            Log.d("PokeTest", "Content trigger")
                             adapter.submitData(lifecycle, state.pagingData)
+                            setupCheckBoxes()
                             binding.btnPokemonsReinitialization.setOnClickListener {
                                 viewModel.onEvent(PokemonCatalogEvent.OnReinitialize)
                             }
+
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun setupCheckBoxes() {
+        binding.checkboxAttack.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.onEvent(PokemonCatalogEvent.OnCheckStatFilter(StatType.ATTACK, isChecked))
+            scrollToTop(true)
+        }
+        binding.checkboxDefense.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.onEvent(PokemonCatalogEvent.OnCheckStatFilter(StatType.DEFENSE, isChecked))
+            scrollToTop(true)
+        }
+        binding.checkboxHp.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.onEvent(PokemonCatalogEvent.OnCheckStatFilter(StatType.HP, isChecked))
+            scrollToTop(true)
+        }
+    }
+
+    private fun scrollToTop(flag: Boolean) {
+        if (flag) binding.rvPokemons.smoothScrollToPosition(START_SCROLL_POSITION)
     }
 
     private fun showProgressBar(isShow: Boolean) {
@@ -93,10 +122,9 @@ class PokemonCatalogFragment : Fragment() {
         snackbar.show()
     }
 
-    private fun initRecyclerView() {
+    private fun setupRecyclerView() {
         binding.rvPokemons.layoutManager = LinearLayoutManager(context)
         binding.rvPokemons.adapter = adapter
-        observePagingLoadState()
     }
 
     private fun observePagingLoadState() {
@@ -106,9 +134,11 @@ class PokemonCatalogFragment : Fragment() {
 
                     when (loadState.refresh) {
                         is LoadState.Loading -> {
+                            currentSnackbar?.dismiss()
                             showProgressBar(true)
                         }
                         is LoadState.Error -> {
+                            Log.d("PokeTest-E-frag", "refresh error")
                             showProgressBar(false)
                             showErrorSnackbar(binding.root, getString(R.string.error_message_title))
                         }
@@ -123,6 +153,7 @@ class PokemonCatalogFragment : Fragment() {
                         }
 
                         is LoadState.Error -> {
+                            Log.d("PokeTest-E-frag", "append error")
                             showBottomProgressBar(false)
                         }
 
@@ -141,5 +172,9 @@ class PokemonCatalogFragment : Fragment() {
         _binding = null
     }
 
+
+    companion object {
+        private const val START_SCROLL_POSITION = 0
+    }
 }
 

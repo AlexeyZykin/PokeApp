@@ -6,5 +6,6 @@ data class Pokemon(
     val height: Int,
     val weight: Int,
     val stats: List<PokemonStat>,
-    val image: PokeImage
+    val image: PokeImage,
+    val isTop: Boolean
 )
