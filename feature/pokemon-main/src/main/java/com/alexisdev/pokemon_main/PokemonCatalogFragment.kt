@@ -63,12 +63,19 @@ class PokemonCatalogFragment : Fragment() {
                             setupCheckBoxes()
                             binding.btnPokemonsReinitialization.setOnClickListener {
                                 viewModel.onEvent(PokemonCatalogEvent.OnReinitialize)
+                                resetCheckBoxes()
                             }
 
                         }
                     }
                 }
             }
+        }
+    }
+
+    private fun resetCheckBoxes() = with(binding) {
+        listOf(checkboxAttack, checkboxDefense, checkboxHp).forEach { checkBox ->
+            checkBox.isChecked = false
         }
     }
 
@@ -108,6 +115,7 @@ class PokemonCatalogFragment : Fragment() {
         )
         snackbar.setAction(getString(R.string.error_action_retry)) {
             viewModel.onEvent(PokemonCatalogEvent.OnRetry)
+            resetCheckBoxes()
         }
         snackbar.setActionTextColor(requireContext().getColor(designsystem.color.pink))
         snackbar.addCallback(object : Snackbar.Callback() {
