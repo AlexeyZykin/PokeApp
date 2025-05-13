@@ -138,7 +138,6 @@ class PokemonCatalogFragment : Fragment() {
                             showProgressBar(true)
                         }
                         is LoadState.Error -> {
-                            Log.d("PokeTest-E-frag", "refresh error")
                             showProgressBar(false)
                             showErrorSnackbar(binding.root, getString(R.string.error_message_title))
                         }
@@ -153,7 +152,6 @@ class PokemonCatalogFragment : Fragment() {
                         }
 
                         is LoadState.Error -> {
-                            Log.d("PokeTest-E-frag", "append error")
                             showBottomProgressBar(false)
                         }
 

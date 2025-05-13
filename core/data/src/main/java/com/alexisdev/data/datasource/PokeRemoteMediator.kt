@@ -37,7 +37,7 @@ class PokeRemoteMediator(
         return try {
             val offset = when (loadType) {
                 LoadType.REFRESH -> {
-                    Log.d("PokeTestRM", "REFRESH")
+                    Log.d("PokeTest-RM", "REFRESH")
                     val pokeApiInfo = pokeApi.fetchPokeApiInfo()
                     if (isRandomStartPositionMode)
                         PokeUtils.generateRandomOffsetValue(
@@ -49,11 +49,11 @@ class PokeRemoteMediator(
                             ?: PokeApi.START_OFFSET_VALUE
                     }
                 LoadType.PREPEND -> {
-                    Log.d("PokeTestRM", "PREPEND")
+                    Log.d("PokeTest-RM", "PREPEND")
                     return MediatorResult.Success(endOfPaginationReached = true)
                 }
                 LoadType.APPEND -> {
-                    Log.d("PokeTestRM", "APPEND")
+                    Log.d("PokeTest-RM", "APPEND")
                     val remoteKeys = getRemoteKeyForLastItem(state)
                     val nextKey = remoteKeys?.nextKey
                         ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
@@ -70,11 +70,9 @@ class PokeRemoteMediator(
                         emit(pokeApi.fetchPokemonDetails(pokemonDto.name).toPokemonEntity())
                     }.flowOn(Dispatchers.IO)
                 }
-                .catch { Log.d("PokeTestError", it.message.toString()) }
                 .toList()
-                .sortedBy { it.id }
 
-            Log.d("PokeTest", pokemons.size.toString())
+            Log.d("PokeTest-RM-Response", pokemons.size.toString())
 
             db.withTransaction {
                 if (loadType == LoadType.REFRESH) {
@@ -99,7 +97,7 @@ class PokeRemoteMediator(
                 endOfPaginationReached = endOfPaginationReached
             )
         } catch (e: Exception) {
-            Log.d("PokeTest. Paging source Error:", e.message.toString())
+            Log.d("PokeTest-RM-Error:", e.message.toString())
 
             MediatorResult.Error(e)
         }
