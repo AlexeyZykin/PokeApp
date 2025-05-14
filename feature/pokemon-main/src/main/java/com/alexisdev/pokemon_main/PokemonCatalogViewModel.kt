@@ -39,8 +39,8 @@ internal class PokemonCatalogViewModel(
     private val _state = MutableStateFlow<PokemonCatalogState>(PokemonCatalogState.Loading)
     val state: MutableStateFlow<PokemonCatalogState> get() = _state
 
-    private val _topPokemonUpdateState = MutableSharedFlow<Unit>()
-    val topPokemonUpdateState: SharedFlow<Unit> = _topPokemonUpdateState.asSharedFlow()
+    private val _topPokemonUpdateState = MutableSharedFlow<Pokemon?>()
+    val topPokemonUpdateState: SharedFlow<Pokemon?> = _topPokemonUpdateState.asSharedFlow()
 
     init {
         setupPokemonFlow()
@@ -90,7 +90,7 @@ internal class PokemonCatalogViewModel(
         findPokemonByFiltersUseCase.execute()
             .onEach { pokemon ->
                 saveTopPokemonUseCase.execute(pokemon)
-                _topPokemonUpdateState.emit(Unit)
+                _topPokemonUpdateState.emit(pokemon)
             }
             .launchIn(viewModelScope)
     }

@@ -85,10 +85,12 @@ class PokemonCatalogFragment : Fragment() {
 
     private fun observeTopPokemonUpdates() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.topPokemonUpdateState.collectLatest {
-                delay(300)
-                withContext(Dispatchers.Main) {
-                    binding.rvPokemons.smoothScrollToPosition(START_SCROLL_POSITION)
+            viewModel.topPokemonUpdateState.collectLatest { pokemon ->
+                pokemon?.let {
+                    delay(300)
+                    withContext(Dispatchers.Main) {
+                        binding.rvPokemons.smoothScrollToPosition(START_SCROLL_POSITION)
+                    }
                 }
             }
         }

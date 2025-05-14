@@ -14,7 +14,8 @@
         android:background="@color/primary"
         android:minHeight="?android:attr/actionBarSize"
         app:layout_constraintTop_toTopOf="parent"
-        app:titleCentered="true" />
+        app:titleCentered="true"
+        app:titleTextColor="@color/white" />
 
     <fragment
         android:id="@+id/nav_host_fragment"
