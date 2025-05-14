@@ -18,12 +18,10 @@ class PokemonAdapter(private val clickListener: ClickListener) : PagingDataAdapt
 
         fun bind(pokemon: Pokemon, clickListener: ClickListener) {
             val context = binding.root.context
-            binding.cvPokemon.setCardBackgroundColor(
-                if (pokemon.isTop) {
-                    context.getColor(designsystem.color.primary)
-                }
-                else context.getColor(designsystem.color.white)
-            )
+
+            val colorRes = if (pokemon.isTop) designsystem.color.primary
+            else designsystem.color.white
+            binding.cvPokemon.setCardBackgroundColor(context.getColor(colorRes))
 
             binding.tvPokeId.text = pokemon.id.toString()
             Glide

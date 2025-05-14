@@ -11,13 +11,18 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import androidx.paging.PagingData
-import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.alexisdev.domain.model.Pokemon
 import com.alexisdev.domain.model.StatType
 import com.alexisdev.pokemon_main.databinding.FragmentPokemonCatalogBinding
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import com.alexisdev.common.R as designsystem
 
@@ -27,7 +32,6 @@ class PokemonCatalogFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel by viewModel<PokemonCatalogViewModel>()
     private var currentSnackbar: Snackbar? = null
-
     private val adapter by lazy { PokemonAdapter(object : PokemonAdapter.ClickListener {
         override fun onClick(pokeName: String) {
             viewModel.onEvent(PokemonCatalogEvent.OnNavigateToDetails(pokeName))
@@ -42,6 +46,7 @@ class PokemonCatalogFragment : Fragment() {
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
@@ -55,17 +60,10 @@ class PokemonCatalogFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.state.collect { state ->
                     when (state) {
-                        is PokemonCatalogState.Loading -> {
-                        }
+                        is PokemonCatalogState.Loading -> Unit
                         is PokemonCatalogState.Content -> {
                             Log.d("PokeTest", "Content trigger")
-                            adapter.submitData(lifecycle, state.pagingData)
-                            setupCheckBoxes()
-                            binding.btnPokemonsReinitialization.setOnClickListener {
-                                viewModel.onEvent(PokemonCatalogEvent.OnReinitialize)
-                                resetCheckBoxes()
-                            }
-
+                            handleContentState(state.pagingData)
                         }
                     }
                 }
@@ -73,30 +71,49 @@ class PokemonCatalogFragment : Fragment() {
         }
     }
 
+
+    private fun handleContentState(pagingData: PagingData<Pokemon>) {
+        adapter.submitData(lifecycle, pagingData)
+        setupCheckBoxes()
+        observeTopPokemonUpdates()
+        binding.btnPokemonsReinitialization.setOnClickListener {
+            viewModel.onEvent(PokemonCatalogEvent.OnReinitialize)
+            resetCheckBoxes()
+        }
+    }
+
+
+    private fun observeTopPokemonUpdates() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.topPokemonUpdateState.collectLatest {
+                delay(300)
+                withContext(Dispatchers.Main) {
+                    binding.rvPokemons.smoothScrollToPosition(START_SCROLL_POSITION)
+                }
+            }
+        }
+    }
+
+
     private fun resetCheckBoxes() = with(binding) {
         listOf(checkboxAttack, checkboxDefense, checkboxHp).forEach { checkBox ->
             checkBox.isChecked = false
         }
     }
 
+
     private fun setupCheckBoxes() {
         binding.checkboxAttack.setOnCheckedChangeListener { _, isChecked ->
             viewModel.onEvent(PokemonCatalogEvent.OnCheckStatFilter(StatType.ATTACK, isChecked))
-            scrollToTop(true)
         }
         binding.checkboxDefense.setOnCheckedChangeListener { _, isChecked ->
             viewModel.onEvent(PokemonCatalogEvent.OnCheckStatFilter(StatType.DEFENSE, isChecked))
-            scrollToTop(true)
         }
         binding.checkboxHp.setOnCheckedChangeListener { _, isChecked ->
             viewModel.onEvent(PokemonCatalogEvent.OnCheckStatFilter(StatType.HP, isChecked))
-            scrollToTop(true)
         }
     }
 
-    private fun scrollToTop(flag: Boolean) {
-        if (flag) binding.rvPokemons.smoothScrollToPosition(START_SCROLL_POSITION)
-    }
 
     private fun showProgressBar(isShow: Boolean) {
         if (isShow) binding.progressBar.visibility = View.VISIBLE
@@ -104,10 +121,12 @@ class PokemonCatalogFragment : Fragment() {
 
     }
 
+
     private fun showBottomProgressBar(isShow: Boolean) {
         if (isShow) binding.progressBottom.visibility = View.VISIBLE
         else binding.progressBottom.visibility = View.GONE
     }
+
 
     private fun showErrorSnackbar(view: View, msg: String) {
         val snackbar = Snackbar.make(
@@ -130,10 +149,12 @@ class PokemonCatalogFragment : Fragment() {
         snackbar.show()
     }
 
+
     private fun setupRecyclerView() {
         binding.rvPokemons.layoutManager = LinearLayoutManager(context)
         binding.rvPokemons.adapter = adapter
     }
+
 
     private fun observePagingLoadState() {
         lifecycleScope.launch {

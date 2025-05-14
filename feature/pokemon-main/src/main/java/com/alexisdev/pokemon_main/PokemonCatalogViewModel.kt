@@ -3,12 +3,8 @@ package com.alexisdev.pokemon_main
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.paging.insertHeaderItem
-import androidx.paging.map
-import com.alexisdev.common.Response
 import com.alexisdev.common.navigation.NavDirection
 import com.alexisdev.common.navigation.NavEffect
 import com.alexisdev.common.navigation.NavigationManager
@@ -21,13 +17,10 @@ import com.alexisdev.domain.usecase.api.GetPokemonsUseCase
 import com.alexisdev.domain.usecase.api.SaveTopPokemonUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -45,6 +38,9 @@ internal class PokemonCatalogViewModel(
     private val refreshTrigger = MutableSharedFlow<Boolean>(1)
     private val _state = MutableStateFlow<PokemonCatalogState>(PokemonCatalogState.Loading)
     val state: MutableStateFlow<PokemonCatalogState> get() = _state
+
+    private val _topPokemonUpdateState = MutableSharedFlow<Unit>()
+    val topPokemonUpdateState: SharedFlow<Unit> = _topPokemonUpdateState.asSharedFlow()
 
     init {
         setupPokemonFlow()
@@ -94,6 +90,7 @@ internal class PokemonCatalogViewModel(
         findPokemonByFiltersUseCase.execute()
             .onEach { pokemon ->
                 saveTopPokemonUseCase.execute(pokemon)
+                _topPokemonUpdateState.emit(Unit)
             }
             .launchIn(viewModelScope)
     }
